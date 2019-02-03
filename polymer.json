@@ -9,6 +9,7 @@
     "analytics.html",
     "img/*",
     "data.js",
+    "manifest.json",
     "service-worker.html",
     "service-worker.js"
   ],

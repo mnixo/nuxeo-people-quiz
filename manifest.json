@@ -1,0 +1,21 @@
+{
+  "short_name": "Nuxeo People Quiz",
+  "name": "Nuxeo People Quiz",
+  "icons": [
+    {
+      "src": "img/logo-white-303030-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "img/logo-white-303030-192.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/nuxeo-people-quiz/",
+  "background_color": "#303030",
+  "display": "standalone",
+  "scope": "/nuxeo-people-quiz/",
+  "theme_color": "#303030"
+}
