@@ -1,0 +1,27 @@
+{
+  "name": "nuxeo-people-quiz",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": "https://github.com/mnixo/nuxeo-people-quiz.git",
+  "author": "Miguel Nixo <mnixo@nuxeo.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "./node_modules/polymer-cli/bin/polymer.js serve",
+    "build": "./node_modules/polymer-cli/bin/polymer.js build && ./node_modules/gulp/bin/gulp.js add-analytics"
+  },
+  "devDependencies": {
+    "@webcomponents/webcomponentsjs": "^2.2.4",
+    "polymer-cli": "^1.9.5"
+  },
+  "dependencies": {
+    "@polymer/iron-image": "^3.0.1",
+    "@polymer/lit-element": "^0.7.1",
+    "@polymer/paper-button": "^3.0.1",
+    "@polymer/paper-card": "^3.0.1",
+    "@polymer/paper-dialog": "^3.0.1",
+    "@polymer/paper-styles": "^3.0.1",
+    "@polymer/paper-toggle-button": "^3.0.1",
+    "gulp": "^3.9.1",
+    "gulp-replace": "^1.0.0"
+  }
+}

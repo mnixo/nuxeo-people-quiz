@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+  <title>Nuxeo People Quiz</title>
+  <meta name="description" content="So you think you know everyone in the company?">
+  <meta property="twitter:image" content="https://github.com/mnixo/nuxeo-people-quiz/raw/master/img/logo-white-303030-192.png">
+  <link rel="shortcut icon" type="image/png" href="img/logo-white-303030-24.png"/>
+  <link rel="import" href="service-worker.html">
+  <link id="analytics">
+  <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+  <script type="module" src="src/npq-app.js"></script>
+</head>
+<body>
+<style>
+  html,
+  body {
+    display: flex;
+    height: 100%;
+    width: 100%;
+  }
+  body {
+    margin: 0;
+  }
+</style>
+<npq-app></npq-app>
+</body>
+</html>

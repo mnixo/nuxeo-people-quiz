@@ -1,0 +1,49 @@
+<style>
+  #container {
+    display: flex;
+    flex-direction: column;
+  }
+  #container > * {
+    padding: 0.5em;
+  }
+</style>
+
+<h3>Nuxeo People Quiz (Members JSify)</h3>
+
+<div id="container">
+  <input id="inputFile" type="file" accept=".json">
+  <div>
+    <span>Encode:</span>
+    <input id="inputEncode" type="checkbox" checked disabled>
+  </div>
+  <div>
+    <button id="buttonDownload" disabled>Download</button>
+  </div>
+</div>
+
+<script>
+  document.getElementById('inputFile').onchange = onChangeEvent => {
+    const file = onChangeEvent.target.files[0];
+    const reader = new FileReader();
+    reader.readAsText(file, 'UTF-8');
+    reader.onload = onLoadEvent => {
+      const filteredContent = JSON.parse(onLoadEvent.target.result);
+      const members = document.getElementById('inputEncode').checked ?
+        filteredContent.data.map(member => btoa(encodeURIComponent(JSON.stringify(member)))) : filteredContent.data;
+      const buttonDownload = document.getElementById('buttonDownload');
+      buttonDownload.onclick = () => {
+        let content = `export const DATA = ${JSON.stringify(members, null, 2)};\n`;
+        content += `export const DATA_TS = ${filteredContent.ts};\n`;
+        const dataString = 'data:text/json;charset=utf-8,' + encodeURIComponent(content);
+        const anchor = document.createElement('a');
+        anchor.setAttribute('href', dataString);
+        anchor.setAttribute('download', 'data.js');
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove()
+      };
+      buttonDownload.disabled = false;
+      document.getElementById('inputEncode').disabled = false;
+    };
+  };
+</script>

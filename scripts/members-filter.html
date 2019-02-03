@@ -1,0 +1,160 @@
+<style>
+  #container,
+  #list,
+  .member-info,
+  .member-options {
+    display: flex;
+    flex-direction: column;
+  }
+  .member-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  #container > *,
+  .member-options,
+  .member-image,
+  .member-info {
+    padding: 0.5em;
+  }
+  .member-image {
+    height: 4em;
+    width: 4em;
+  }
+</style>
+
+<h3>Nuxeo People Quiz (Members Filter)</h3>
+
+<div id="container">
+  <a href="https://api.slack.com/methods/users.list/test" target="_blank">Slack API users.list tester</a>
+  <input id="inputFile" type="file" accept=".json">
+  <div>
+    <button id="buttonAllMale" disabled>All Male</button>
+    <button id="buttonAllFemale" disabled>All Female</button>
+    <button id="buttonAllCustomImage" disabled>All have Custom Images</button>
+    <button id="buttonNoneCustomImage" disabled>None have Custom Images</button>
+    <button id="buttonAllProfilePhoto" disabled>All are Profile Photos</button>
+    <button id="buttonNoneProfilePhoto" disabled>None are Profile Photos</button>
+    <button id="buttonDownload" disabled>Download</button>
+  </div>
+  <div id="list"></div>
+</div>
+
+<script>
+  function getById(id) {
+    return document.getElementById(id);
+  }
+
+  function selector(query) {
+    return document.querySelectorAll(query);
+  }
+
+  getById('inputFile').onchange = onChangeEvent => {
+    const file = onChangeEvent.target.files[0];
+    const reader = new FileReader();
+    reader.readAsText(file, 'UTF-8');
+    reader.onload = onLoadEvent => {
+      const rawData = JSON.parse(onLoadEvent.target.result);
+      const data = rawData.members
+        .filter(member => !member.deleted)
+        .filter(member => !member.is_bot)
+        .filter(member => !member.is_restricted)
+        .filter(member => !member.is_ultra_restricted)
+        .filter(member => !member.profile.always_active)
+        .filter(member => member.profile.first_name && member.profile.last_name)
+        .map(member => {
+          const profile = member.profile;
+          return {
+            id: member.name,
+            firstName: profile.first_name,
+            lastName: profile.last_name,
+            title: profile.title,
+            imageHighResolution: profile.image_1024 || profile.image_512 || profile.image_192,
+            imageLowResolution: profile.image_192,
+          };
+        });
+      const list = getById('list');
+      list.cacheTimestamp = rawData.cache_ts;
+      data.forEach(member => {
+
+        const memberRow = document.createElement('div');
+        memberRow.member = member;
+        memberRow.classList.add('member-row');
+        memberRow.innerHTML = `
+          <div class="member-options">
+            <div>
+              <span>Gender:</span>
+              <select class="gender">
+                <option value="male">Male</option>
+                <option value="female">Female</optionvalue>
+              </select>
+            </div>
+            <div>
+              <span>Has custom image:</span>
+              <input class="has-custom-image" type="checkbox">
+            </div>
+            <div>
+              <span>Is profile photo:</span>
+              <input class="is-profile-photo" type="checkbox">
+            </div>
+          </div>
+          <img class="member-image" src="${member.imageLowResolution}">
+          <div class="member-info">
+            <span>${member.id}</span>
+            <span>${member.firstName} ${member.lastName}</span>
+            <span>${member.title}</span>
+          </div>
+        `;
+        list.appendChild(memberRow);
+
+      });
+
+      getById('buttonAllMale').disabled = false;
+      getById('buttonAllFemale').disabled = false;
+      getById('buttonAllCustomImage').disabled = false;
+      getById('buttonNoneCustomImage').disabled = false;
+      getById('buttonAllProfilePhoto').disabled= false;
+      getById('buttonNoneProfilePhoto').disabled = false;
+      getById('buttonDownload').disabled = false;
+    };
+    reader.onerror = () => console.log('failed to read uploaded file');
+  };
+
+  getById('buttonAllMale').onclick = () =>
+    selector('select.gender').forEach(select => select.selectedIndex = 0);
+
+  getById('buttonAllFemale').onclick = () =>
+    selector('select.gender').forEach(select => select.selectedIndex = 1);
+
+  getById('buttonAllCustomImage').onclick = () =>
+    selector('input.has-custom-image').forEach(input => input.checked = true);
+
+  getById('buttonNoneCustomImage').onclick = () =>
+    selector('input.has-custom-image').forEach(input => input.checked = false);
+
+  getById('buttonAllProfilePhoto').onclick = () =>
+    selector('input.is-profile-photo').forEach(input => input.checked = true);
+
+  getById('buttonNoneProfilePhoto').onclick = () =>
+    selector('input.is-profile-photo').forEach(input => input.checked = false);
+
+  getById('buttonDownload').onclick = () => {
+    const data = Array.from(selector('div.member-row')).map(row => {
+      let member = row.member;
+      member.gender = row.querySelector('select.gender').selectedOptions[0].value;
+      member.isCustomImage = row.querySelector('input.has-custom-image').checked;
+      member.isProfilePhoto = row.querySelector('input.is-profile-photo').checked;
+      return member;
+    });
+    const dataString = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify({
+      data,
+      ts: getById('list').cacheTimestamp,
+    }, null, 2));
+    const anchor = document.createElement('a');
+    anchor.setAttribute('href', dataString);
+    anchor.setAttribute('download', 'data-filtered.json');
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove()
+  };
+</script>
