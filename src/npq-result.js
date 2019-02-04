@@ -65,6 +65,7 @@ class NpqResult extends LitElement {
     NpqUtils.sendEvent('game-over', {
       'event_category' : this._roundsTotal,
       'event_label' : this._roundsWon,
+      'value': this._roundsWon,
     });
   }
 
